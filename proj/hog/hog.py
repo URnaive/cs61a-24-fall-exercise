@@ -256,11 +256,12 @@ def make_averaged(original_function, times_called=1000):
     """
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
-    def func(num=1, dice=six_sided):
-        dice_list = [original_function(num, dice) for _ in range(times_called)]
+    def func(*args):
+        dice_list = [original_function(*args) for _ in range(times_called)]
         return sum(dice_list) / times_called
     return func
     # END PROBLEM 8
+"""*args表示接受任意数量的参数（可变参数）"""
 
 
 def max_scoring_num_rolls(dice=six_sided, times_called=1000):
@@ -273,6 +274,15 @@ def max_scoring_num_rolls(dice=six_sided, times_called=1000):
     """
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
+    averaged_roll_dice = make_averaged(roll_dice, times_called)
+    max_avg = 0
+    best_num_rolls = 1
+    for num_rolls in range(1, 11):
+        avg_score = averaged_roll_dice(num_rolls, dice)
+        if avg_score > max_avg:
+            max_avg = avg_score
+            best_num_rolls = num_rolls
+    return best_num_rolls
     # END PROBLEM 9
 
 
@@ -317,15 +327,24 @@ def boar_strategy(score, opponent_score, threshold=11, num_rolls=6):
     points, and returns NUM_ROLLS otherwise. Ignore score and Sus Fuss.
     """
     # BEGIN PROBLEM 10
-    return num_rolls  # Remove this line once implemented.
+    if boar_brawl(score, opponent_score) >= threshold:
+        return 0
+    else:
+        return num_rolls
     # END PROBLEM 10
+"""调用已经定义过的方法，不增加工作量"""
 
 
 def sus_strategy(score, opponent_score, threshold=11, num_rolls=6):
     """This strategy returns 0 dice when your score would increase by at least threshold."""
     # BEGIN PROBLEM 11
-    return num_rolls  # Remove this line once implemented.
+    pri_score = score
+    if sus_points(score + boar_brawl(score, opponent_score)) - pri_score >= threshold:
+        return 0
+    else:
+        return num_rolls  # Remove this line once implemented.
     # END PROBLEM 11
+"""注意比较增加的分数量，而不是增加后的分数量"""
 
 
 def final_strategy(score, opponent_score):
