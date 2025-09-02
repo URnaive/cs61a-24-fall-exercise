@@ -233,7 +233,14 @@ def is_always_roll(strategy, goal=GOAL):
     """
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
+    base = strategy(0, 0)
+    for i in range(goal):
+        for j in range(goal):
+            if strategy(i, j) != base:
+                return False
+    return True
     # END PROBLEM 7
+"""穷举遍历所有可能的分数来判断掷骰子值是否一致，一致返回True"""
 
 
 def make_averaged(original_function, times_called=1000):
@@ -249,6 +256,10 @@ def make_averaged(original_function, times_called=1000):
     """
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+    def func(num=1, dice=six_sided):
+        dice_list = [original_function(num, dice) for _ in range(times_called)]
+        return sum(dice_list) / times_called
+    return func
     # END PROBLEM 8
 
 
