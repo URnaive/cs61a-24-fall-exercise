@@ -101,9 +101,17 @@ def accuracy(typed, source):
     source_words = split(source)
     # BEGIN PROBLEM 3
     "*** YOUR CODE HERE ***"
-    
+    if typed == '':
+        return (100.0 if source == '' else 0.0)
 
+    correct = 0
+    N = min(len(typed_words), len(source_words))
+    for ind in range(N):
+        if typed_words[ind] == source_words[ind]:
+            correct += 1
+    return correct / len(typed_words) * 100
     # END PROBLEM 3
+    # correspond指两个单词的大小写、标点和索引号都要一致。否则视为incorrect.
 
 
 def wpm(typed, elapsed):
@@ -121,6 +129,7 @@ def wpm(typed, elapsed):
     assert elapsed > 0, "Elapsed time must be positive"
     # BEGIN PROBLEM 4
     "*** YOUR CODE HERE ***"
+    return ((len(typed)) / 5) * (60 / elapsed)
     # END PROBLEM 4
 
 
