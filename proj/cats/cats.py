@@ -191,6 +191,19 @@ def autocorrect(typed_word, word_list, diff_function, limit):
     """
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
+    if typed_word in word_list:
+        return typed_word
+    
+    diff_list = []
+    for i in range(len(word_list)):
+        diff_list += [diff_function(typed_word, word_list[i], limit)]
+    minimum_limit = min(diff_list)
+    if minimum_limit > limit:
+        return typed_word
+    else:
+        for j in range(len(diff_list)):
+            if diff_list[j] == minimum_limit:
+                return word_list[j]
     # END PROBLEM 5
 
 
@@ -217,8 +230,19 @@ def furry_fixes(typed, source, limit):
     5
     """
     # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
+    diff = abs(len(typed) - len(source))
+    if limit < 0:
+        return float('inf')
+    
+    if min(len(typed), len(source)) == 0:
+        return diff
+    
+    if typed[0] == source[0]:
+        return furry_fixes(typed[1:], source[1:], limit)
+    else:
+        return 1 + furry_fixes(typed[1:], source[1:], limit - 1)
     # END PROBLEM 6
+    # 检测到Limit被减到小于零时直接返回无穷大，节约运行时间；按照递归的方式逐个检测字母。
 
 
 def minimum_mewtations(typed, source, limit):
@@ -238,22 +262,29 @@ def minimum_mewtations(typed, source, limit):
     >>> minimum_mewtations("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
     3
     """
-    assert False, 'Remove this line'
-    if ___________: # Base cases should go here, you may add more base cases as needed.
+    if limit < 0: # Base cases should go here, you may add more base cases as needed.
         # BEGIN
         "*** YOUR CODE HERE ***"
+        return float('inf')
+    
+    if typed == '' or source == '':
+        return max(len(typed), len(source))
+    
+    if typed == source:
+        return 0
         # END
     # Recursive cases should go below here
-    if ___________: # Feel free to remove or add additional cases
+    if typed[0] == source[0]: # Feel free to remove or add additional cases
         # BEGIN
         "*** YOUR CODE HERE ***"
+        return minimum_mewtations(typed[1:], source[1:], limit)
         # END
     else:
-        add = ... # Fill in these lines
-        remove = ...
-        substitute = ...
+        add = 1 + minimum_mewtations(typed, source[1:], limit - 1)
+        remove = 1 + minimum_mewtations(typed[1:], source, limit - 1)
+        substitute = 1 + minimum_mewtations(typed[1:], source[1:], limit - 1)
         # BEGIN
-        "*** YOUR CODE HERE ***"
+        return min(add, remove, substitute)
         # END
 
 
@@ -300,7 +331,22 @@ def report_progress(typed, source, user_id, upload):
     """
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+    if typed == '':
+        return (1.0 if source == '' else 0.0)
+
+    correct = 0
+    N = min(len(typed), len(source))
+    for ind in range(N):
+        if typed[ind] == source[ind]:
+            correct += 1
+        else: 
+            break
+    res = correct / len(source)
+    res_dict = {'id': user_id, 'progress': res}
+    upload(res_dict)
+    print(res)
     # END PROBLEM 8
+    # 不能直接调用accuracy函数
 
 
 def time_per_word(words, timestamps_per_player):
@@ -323,7 +369,10 @@ def time_per_word(words, timestamps_per_player):
     """
     tpp = timestamps_per_player  # A shorter name (for convenience)
     # BEGIN PROBLEM 9
-    times = []  # You may remove this line
+    times = [[] for _ in range(len(tpp))]
+    for i in range(len(times)):
+        for j in range(1, len(tpp[i])):
+            times[i] += [tpp[i][j] - tpp[i][j - 1]]
     # END PROBLEM 9
     return {'words': words, 'times': times}
 
@@ -351,6 +400,18 @@ def fastest_words(words_and_times):
     word_indices = range(len(words))    # contains an *index* for each word
     # BEGIN PROBLEM 10
     "*** YOUR CODE HERE ***"
+    win_word_list = [[] for _ in player_indices]
+    time_list = [[] for _ in word_indices]
+    for i in word_indices:
+        for j in player_indices:
+            time_list[i] += [times[j][i]]
+    
+    for k in range(len(time_list)):
+        for l in player_indices:
+            if time_list[k][l] == min(time_list[k]):  
+                win_word_list[l] += [words[k]]
+                break # 找到最小值后及时跳出，不再遍历之后的值
+    return win_word_list
     # END PROBLEM 10
 
 
